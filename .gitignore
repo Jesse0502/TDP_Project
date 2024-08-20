@@ -1,3 +1,5 @@
 .env
 node_modules
 apikeys.txt
+venv
+__pycache__

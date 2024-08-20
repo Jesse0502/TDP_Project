@@ -25,7 +25,7 @@ const SingleNews = () => {
     setWaiting(true);
     setMessages((m) => [...m, { sender: "You", content: msg }]);
     setTimeout(async () => {
-      const result = await axios.post("http://localhost:3000/respond", {
+      const result = await axios.post("http://localhost:8000/respond", {
         data: {
           msg: `Based on this chat history respond to this message. ${JSON.stringify(
             messages
@@ -45,9 +45,10 @@ const SingleNews = () => {
   useEffect(() => {
     (async () => {
       setWaiting(true);
-      const response = await axios.post("http://localhost:3000/get-context", {
+      const response = await axios.post("http://localhost:8000/get-context", {
         data: { title: singleNews?.title, content: singleNews?.content },
       });
+      console.log("response from get context", response);
       setMessages((m) => [
         ...m,
         { sender: "Bot", content: response.data.result },

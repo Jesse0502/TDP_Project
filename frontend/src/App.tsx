@@ -23,7 +23,7 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const newsData = await axios.get("http://localhost:3000/news");
+      const newsData = await axios.get("http://localhost:8000/fake-data");
       setNewsData(newsData.data);
       console.log(newsData.data);
       dispatch(setAllNews(newsData.data));

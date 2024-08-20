@@ -9,16 +9,14 @@ import { store } from "./store/store.ts";
 import { Provider } from "react-redux";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Provider store={store}>
-      <ChakraProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<App />} />
-            <Route path="/headline/:title" element={<SingleNews />} />
-          </Routes>
-        </BrowserRouter>
-      </ChakraProvider>
-    </Provider>
-  </StrictMode>
+  <Provider store={store}>
+    <ChakraProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/headline/:title" element={<SingleNews />} />
+        </Routes>
+      </BrowserRouter>
+    </ChakraProvider>
+  </Provider>
 );
