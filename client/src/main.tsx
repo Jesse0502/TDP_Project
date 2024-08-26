@@ -25,7 +25,7 @@ const Main = () => {
             }
           />
           <Route
-            path="/news/:title"
+            path="/:title"
             element={<NewsSingle newsData={newsData} />}
           />
         </Routes>

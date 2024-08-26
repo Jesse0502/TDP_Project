@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Disclosure,
   DisclosureButton,
@@ -17,8 +18,30 @@ function classNames(...classes: string[]) {
 }
 
 export default function Example() {
+  const [hasShadow, setHasShadow] = useState<boolean>(false);
+
+  const handleScroll = () => {
+    if (window.scrollY > 0) {
+      setHasShadow(true);
+    } else {
+      setHasShadow(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <Disclosure as="nav" className="bg-gray-100">
+    <Disclosure
+      as="nav"
+      className={`pt-2 sticky top-0 bg-white z-10 transition-all ${
+        hasShadow ? 'shadow-xl' : ''
+      }`}
+    >
       <div className="ng-container">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -38,7 +61,7 @@ export default function Example() {
           </div>
           <div className="flex flex-1 items-center sm:items-stretch justify-between">
             <div className="flex flex-shrink-0 items-center">
-              <h1 className="font-bold text-gray-800 text-xl">
+              <h1 className="font-bold text-white text-xl bg-blue-500 rounded-full px-4 py-2">
                 <Link to="/">News Aggregator</Link>
               </h1>
             </div>
@@ -51,9 +74,9 @@ export default function Example() {
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
                       item.current
-                        ? 'bg-gray-300 text-black'
-                        : 'text-black hover:bg-gray-700 hover:text-white',
-                      'rounded-md px-3 py-2 text-sm font-medium'
+                        ? 'bg-blue-500 text-white'
+                        : 'text-black hover:bg-gray-200 hover:text-blue-500',
+                      'rounded-full px-3 py-2 text-sm font-bold transition-all'
                     )}
                   >
                     {item.name}

@@ -49,6 +49,7 @@ const SingleNews = () => {
         data: { title: singleNews?.title, content: singleNews?.content },
       });
       console.log("response from get context", response);
+      // m is the message instance
       setMessages((m) => [
         ...m,
         { sender: "Bot", content: response.data.result },

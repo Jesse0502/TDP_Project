@@ -1,7 +1,7 @@
 // import { cn } from '../lib/utils';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { BentoGrid, BentoGridItem } from './ui/BentoGrid';
+import { BentoGrid, BentoGridItem } from './BentoGrid';
 import { excerpt } from '../lib/utils';
 
 interface NewsListProps {
@@ -33,9 +33,11 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
     <BentoGrid className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 my-10">
       {newsData.map((item, i) => (
         <BentoGridItem
+          source={item.source_url}
+          category={item.category}
           key={i}
           title={item.title}
-          description={excerpt(item.content, 120)}
+          description={excerpt(item.content, 80)}
           header={<Skeleton url={item.img} />}
           className={i === 3 || i === 6 ? 'md:col-span-2' : ''}
           onClick={() => onDiscussClick(item)}
@@ -45,8 +47,15 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
   );
 };
 const Skeleton: React.FC<{ url: string }> = ({ url }) => (
-  <div className="relative w-full h-[15rem] rounded-xl overflow-hidden">
-    <img src={url} alt="Image" className="w-full h-full object-cover" />
+  <div className="relative w-full h-[13rem] rounded-xl overflow-hidden">
+    <img
+      src={url}
+      alt="Image"
+      className="w-full h-full object-cover"
+      onError={($e) =>
+        ($e.target.src = `https://www.centaursoftware.com.au/wp-content/uploads/2019/06/default-fallback-image.png`)
+      }
+    />
     <div className="absolute inset-0 opacity-70"></div>
   </div>
 );

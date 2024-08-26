@@ -1,31 +1,8 @@
 import Navbar from '../components/Navbar';
-// import NewsList from '../components/NewsList';
-import Chatbox from '../components/ui/Chatbox';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import Chatbox from '../components/Chatbox';
+import { formatReadableDate } from '../lib/utils';
 
 const NewsSingle = ({ newsData }: { newsData: any }) => {
-  const [waiting, setWaiting] = useState(false);
-  const [result, setResult] = useState<{ sender: string; content: string }[]>(
-    []
-  );
-
-  useEffect(() => {
-    (async () => {
-      setWaiting(true);
-
-      const response = await axios.post('http://localhost:8000/get-context', {
-        data: { title: newsData?.title, content: newsData?.content },
-      });
-      setResult((prevResult) => [
-        ...prevResult,
-        { sender: 'Bot', content: response.data.result },
-      ]);
-
-      setWaiting(false);
-    })();
-  }, [newsData?.content, newsData?.title]);
-
   return (
     <>
       <Navbar />
@@ -33,9 +10,9 @@ const NewsSingle = ({ newsData }: { newsData: any }) => {
         <div className="ng-container top-14 relative grid grid-cols-12 gap-8">
           <div className="col-span-7">
             <h1 className="text-4xl font-bold">{newsData.title}</h1>
-            <p>Date</p>
-            <div className="h-[55vh]">
-              <Chatbox result={result} isWaiting={waiting} />
+            <p className="my-2">{formatReadableDate(newsData.date)}</p>
+            <div className="h-[70vh]">
+              <Chatbox newsData={newsData} />
             </div>
           </div>
           <div className="col-span-5 rounded-xl">
@@ -43,7 +20,7 @@ const NewsSingle = ({ newsData }: { newsData: any }) => {
               <img
                 src={newsData.img}
                 alt=""
-                className="w-full h-full object-contain rounded-xl"
+                className="w-full h-full object-cover rounded-xl"
               />
             </div>
           </div>

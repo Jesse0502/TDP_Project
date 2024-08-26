@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 load_dotenv() 
 origins = [
     "http://localhost:5173",
+    "http://localhost:5174",
 ]
 
 
