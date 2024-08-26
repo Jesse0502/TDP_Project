@@ -1,7 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Manrope:wght@200..800&family=Quicksand:wght@300..700&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+  font-family: "Manrope", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .ng-container {
   @apply mx-auto max-w-7xl px-2 sm:px-6 lg:px-8;
+}
+
+.ng-container-sm {
+  @apply mx-auto max-w-4xl px-2 sm:px-6 lg:px-8;
+}
+
+
+/* Custom Scrollbar Styles */
+.custom-scroll::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+    height: 8px; /* Height of the scrollbar for horizontal scrolling */
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: #f7f7f7; /* Light grey background for the scrollbar track */
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #e5e7eb; /* Light grey color for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8; /* Slightly darker grey on hover */
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:active {
+  background: #909090; /* Even darker grey when active */
+}
+
+.custom-scroll::-webkit-scrollbar-corner {
+  background: #f7f7f7; /* Background of the corner where two scrollbars meet */
 }

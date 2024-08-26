@@ -4,6 +4,7 @@ import {
   DisclosurePanel,
 } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 
 const navigation = [
   { name: 'All News', href: '#', current: true },
@@ -17,10 +18,7 @@ function classNames(...classes: string[]) {
 
 export default function Example() {
   return (
-    <Disclosure
-      as="nav"
-      className="bg-gradient-to-br from-neutral-200 to-neutral-100"
-    >
+    <Disclosure as="nav" className="bg-gray-100">
       <div className="ng-container">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -40,8 +38,8 @@ export default function Example() {
           </div>
           <div className="flex flex-1 items-center sm:items-stretch justify-between">
             <div className="flex flex-shrink-0 items-center">
-              <h1 className="font-bold text-gray-800 ml-2 text-xl">
-                News Aggregator
+              <h1 className="font-bold text-gray-800 text-xl">
+                <Link to="/">News Aggregator</Link>
               </h1>
             </div>
             <div className="hidden sm:ml-6 sm:block">

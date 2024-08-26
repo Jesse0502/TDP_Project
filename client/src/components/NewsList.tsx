@@ -4,7 +4,11 @@ import axios from 'axios';
 import { BentoGrid, BentoGridItem } from './ui/BentoGrid';
 import { excerpt } from '../lib/utils';
 
-export default function NewsList() {
+interface NewsListProps {
+  onDiscussClick: (item: unknown) => void;
+}
+
+const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
   const [newsData, setNewsData] = useState<
     {
       date: string; // ISO 8601 formatted date string (e.g., "2024-08-10T04:21:04Z")
@@ -34,14 +38,17 @@ export default function NewsList() {
           description={excerpt(item.content, 120)}
           header={<Skeleton url={item.img} />}
           className={i === 3 || i === 6 ? 'md:col-span-2' : ''}
+          onClick={() => onDiscussClick(item)}
         />
       ))}
     </BentoGrid>
   );
-}
+};
 const Skeleton: React.FC<{ url: string }> = ({ url }) => (
   <div className="relative w-full h-[15rem] rounded-xl overflow-hidden">
     <img src={url} alt="Image" className="w-full h-full object-cover" />
-    <div className="absolute inset-0 bg-gradient-to-t from-blue-100 to-blue-900 opacity-70"></div>
+    <div className="absolute inset-0 opacity-70"></div>
   </div>
 );
+
+export default NewsList;

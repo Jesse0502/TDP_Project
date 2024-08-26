@@ -1,11 +1,13 @@
 import Navbar from './components/Navbar';
 import NewsList from './components/NewsList';
 
-export default function App() {
+const App = ({ passInTop }: { passInTop: (item: unknown) => void }) => {
   return (
     <>
       <Navbar />
-      <NewsList />
+      <NewsList onDiscussClick={(item) => passInTop(item)} />
     </>
   );
-}
+};
+
+export default App;
