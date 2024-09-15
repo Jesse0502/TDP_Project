@@ -7,6 +7,9 @@ import requests
 import json
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
+import torch.nn.functional as F
 
 load_dotenv() 
 origins = [
@@ -14,6 +17,10 @@ origins = [
     "http://localhost:5174",
 ]
 
+# Initialize the model and tokenizer
+model_name = "distilbert-base-uncased-finetuned-sst-2-english"
+model = AutoModelForSequenceClassification.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 genai.configure(api_key=os.getenv("GEMINI_API"))
 app = FastAPI()
@@ -102,3 +109,22 @@ async def respond(data: dict = Body(...)):
     return {'result': airesp}
   except (ValueError, Exception) as err:
     raise HTTPException(status_code=400, detail=str(err))  
+  
+@app.post("/analyze_sentiment")
+async def analyze_sentiment(data: dict = Body(...)):
+    try:
+        text = data.get('text', '')
+        if not text:
+            raise ValueError("No text provided")
+
+        # Tokenize and analyze sentiment
+        inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+        with torch.no_grad():
+            outputs = model(**inputs)
+            predictions = F.softmax(outputs.logits, dim=1)
+            labels = torch.argmax(predictions, dim=1)
+            sentiment = model.config.id2label[labels.item()]
+
+        return {'sentiment': sentiment}
+    except (ValueError, Exception) as err:
+        raise HTTPException(status_code=400, detail=str(err))

@@ -1,7 +1,9 @@
-import { Button, Center, Image, Link } from "@chakra-ui/react";
+import { Button, Center, Image, Link, Text } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { setSingleNews } from "../store/newsSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const NewsBlock = ({
   n,
@@ -20,8 +22,23 @@ const NewsBlock = ({
   console.log("n", n);
 
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
+  const [sentiment, setSentiment] = useState<string>("");
+
+  useEffect(() => {
+    const fetchSentiment = async () => {
+      try {
+        const response = await axios.post("http://localhost:8000/analyze_sentiment", {
+          text: n.content,
+        });
+        setSentiment(response.data.sentiment);
+      } catch (error) {
+        console.error("Error fetching sentiment:", error);
+      }
+    };
+    fetchSentiment();
+  }, [n.content]);
+
   const handleOnClick = () => {
     dispatch(setSingleNews(n));
     navigate("/headline/" + n.title.replaceAll(" ", "_"));
@@ -39,6 +56,11 @@ const NewsBlock = ({
       <Link href={n.source_url} color="blue.500" textAlign={"center"}>
         {n.title}
       </Link>
+      {sentiment && (
+        <Text fontWeight="bold" color="green.500">
+          Sentiment: {sentiment}
+        </Text>
+      )}
       <Button w="full" my="2px" onClick={handleOnClick}>
         Discuss
       </Button>
