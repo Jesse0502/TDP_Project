@@ -30,20 +30,24 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
   }, []);
 
   return (
-    <BentoGrid className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 my-10">
-      {newsData.map((item, i) => (
-        <BentoGridItem
-          source={item.source_url}
-          category={item.category}
-          key={i}
-          title={item.title}
-          description={excerpt(item.content, 80)}
-          header={<Skeleton url={item.img} />}
-          className={i === 3 || i === 6 ? 'md:col-span-2' : ''}
-          onClick={() => onDiscussClick(item)}
-        />
-      ))}
-    </BentoGrid>
+    <div className="ng-container">
+      <div className="">
+        <BentoGrid className="mx-auto max-w-7xl my-10">
+          {newsData.map((item, i) => (
+            <BentoGridItem
+              source={item.source_url}
+              category={item.category}
+              key={i}
+              title={item.title}
+              description={excerpt(item.content, 80)}
+              header={<Skeleton url={item.img} />}
+              className={i === 3 || i === 6 ? 'md:col-span-2' : ''}
+              onClick={() => onDiscussClick(item)}
+            />
+          ))}
+        </BentoGrid>
+      </div>
+    </div>
   );
 };
 const Skeleton: React.FC<{ url: string }> = ({ url }) => (
@@ -56,7 +60,12 @@ const Skeleton: React.FC<{ url: string }> = ({ url }) => (
         ($e.target.src = `https://www.centaursoftware.com.au/wp-content/uploads/2019/06/default-fallback-image.png`)
       }
     />
-    <div className="absolute inset-0 opacity-70"></div>
+    <div className="absolute inset-0 opacity-75">
+      <span className="absolute flex h-5 w-5 right-3 top-3">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></span>
+      </span>
+    </div>
   </div>
 );
 

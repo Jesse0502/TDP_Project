@@ -38,7 +38,7 @@ export default function Example() {
   return (
     <Disclosure
       as="nav"
-      className={`pt-2 sticky top-0 bg-white z-10 transition-all ${
+      className={`py-2 sticky top-0 bg-white z-10 transition-all ${
         hasShadow ? 'shadow-xl' : ''
       }`}
     >
@@ -65,7 +65,7 @@ export default function Example() {
                 <Link to="/">News Aggregator</Link>
               </h1>
             </div>
-            <div className="hidden sm:ml-6 sm:block">
+            <div className="sm:ml-6 sm:block flex items-center">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
                   <a
