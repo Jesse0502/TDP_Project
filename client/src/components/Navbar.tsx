@@ -60,12 +60,12 @@ export default function Example() {
             </DisclosureButton>
           </div>
           <div className="flex flex-1 items-center sm:items-stretch justify-between">
-            <div className="flex flex-shrink-0 items-center">
-              <h1 className="font-bold text-white text-xl bg-blue-500 rounded-full px-4 py-2">
-                <Link to="/">News Aggregator</Link>
-              </h1>
+            <div className="flex flex-shrink-0 items-center h-14">
+              <Link to="/" className='w-full h-full'>
+                <img src="smart-news.png" alt="" className='w-full h-full object-contain'/>
+              </Link>
             </div>
-            <div className="sm:ml-6 sm:block flex items-center">
+            <div className="sm:ml-6 flex items-center">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
                   <a

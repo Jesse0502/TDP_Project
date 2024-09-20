@@ -64,7 +64,6 @@ export const BentoGridItem = ({
                     width="100%"
                     height="100%"
                   >
-                    <title>speech-chat-talk-bubble-flat</title>
                     <path
                       d="M0,256C0,114.62,114.62,0,256,0S512,114.63,512,256,397.37,512,256,512,0,397.38,0,256Z"
                       fill="#fff"
