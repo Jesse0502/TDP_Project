@@ -7,6 +7,14 @@ import requests
 import json
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
+import torch.nn.functional as F
+from fastapi.middleware.cors import CORSMiddleware
+import logging
+from bias_detection import predict_article
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv() 
 origins = [
@@ -14,6 +22,10 @@ origins = [
     "http://localhost:5174",
 ]
 
+# Initialize the model and tokenizer
+model_name = "distilbert-base-uncased-finetuned-sst-2-english"
+model = AutoModelForSequenceClassification.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 genai.configure(api_key=os.getenv("GEMINI_API"))
 app = FastAPI()
@@ -75,6 +87,47 @@ def load_fake_data():
 def get_fake_data():
   return load_fake_data()
 
+# Define the labels for predictions
+bias_classes = ["Biased", "No agreement", "Non-biased"]
+opinion_classes = [
+    "Somewhat factual but also opinionated", 
+    "Expresses writer’s opinion", 
+    "No agreement", 
+    "Entirely factual"
+]
+type_classes = ["center", "left", "right"]
+
+@app.post("/predict_bias")
+async def predict_bias(data: dict = Body(...)):
+    try:
+        # Expecting a list of articles in the data
+        articles = data.get("articles")
+        if not articles:
+            raise ValueError("No articles provided")
+
+        bias_predictions = []
+        
+        for article in articles:
+            text = article.get("text")  # Assuming each article has a 'text' field
+            bias_class, opinion_class, type_class = predict_article(text)  # Call the prediction function
+
+          # Map the numeric predictions to their respective labels
+            bias_label = bias_classes[bias_class]  # Get bias label
+            opinion_label = opinion_classes[opinion_class]  # Get opinion label
+            type_label = type_classes[type_class]  # Get type label
+
+            bias_predictions.append({
+                "article": text,
+                 "bias": bias_label,           
+                "opinion": opinion_label,     
+                "type": type_label,                
+            })
+
+        return {"bias_predictions": bias_predictions}
+
+    except (ValueError, Exception) as err:
+        raise HTTPException(status_code=400, detail=str(err))
+
 @app.post("/get-context")
 async def get_context(data: dict = Body(...)):
 
@@ -102,3 +155,22 @@ async def respond(data: dict = Body(...)):
     return {'result': airesp}
   except (ValueError, Exception) as err:
     raise HTTPException(status_code=400, detail=str(err))  
+  
+@app.post("/analyze_sentiment")
+async def analyze_sentiment(data: dict = Body(...)):
+    try:
+        text = data.get('text', '')
+        if not text:
+            raise ValueError("No text provided")
+
+        # Tokenize and analyze sentiment
+        inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+        with torch.no_grad():
+            outputs = model(**inputs)
+            predictions = F.softmax(outputs.logits, dim=1)
+            labels = torch.argmax(predictions, dim=1)
+            sentiment = model.config.id2label[labels.item()]
+
+        return {'sentiment': sentiment}
+    except (ValueError, Exception) as err:
+        raise HTTPException(status_code=400, detail=str(err))

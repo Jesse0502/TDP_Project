@@ -2,8 +2,26 @@ import Navbar from '../components/Navbar';
 import Chatbox from '../components/Chatbox';
 import { formatReadableDate } from '../lib/utils';
 import Badge from '../components/Badge';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const NewsSingle = ({ newsData }: { newsData: any }) => {
+  const [sentiment, setSentiment] = useState<string>(""); // Declare sentiment type
+
+  useEffect(() => {
+    const analyzeSentiment = async () => {
+      try {
+        const response = await axios.post('http://localhost:8000/analyze_sentiment', {
+          text: newsData.content,
+        });
+        setSentiment(response.data.sentiment); // Set the sentiment based on API response
+      } catch (error) {
+        console.error('Error analyzing sentiment:', error);
+      }
+    };
+
+    analyzeSentiment();
+  }, [newsData.content]);
   return (
     <>
       <Navbar />
@@ -65,9 +83,10 @@ const NewsSingle = ({ newsData }: { newsData: any }) => {
               <div className="p-4 rounded-xl shadow-xl bg-green-600 mb-4 relative">
                 <h1 className="italic text-xs text-white">Sentiment Report</h1>
                 <div className="flex items-center relative">
-                  {/* Positive */}
                   <div className="flex gap-1 ">
-                    <h1 className="font-bold text-white text-xl">Positive</h1>
+                    <h1 className="font-bold text-white text-xl">
+                    {sentiment ? sentiment : 'Analyzing...'}
+                    </h1>
                   </div>
 
                   <div className="hidden">
