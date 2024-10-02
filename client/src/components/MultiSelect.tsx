@@ -30,14 +30,14 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   };
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="grid grid-cols-12 gap-2 max-h-60 overflow-y-auto custom-scroll px-3">
       {options.map((option) => (
         <button
           key={option.value}
           onClick={() => handleToggle(option.value)}
-          className={`px-4 py-2 rounded ${
+          className={`p-4 rounded-lg col-span-4 ${
             selected.includes(option.value)
-              ? 'bg-blue-500 text-white'
+              ? 'bg-gradient-to-r from-blue-500 to-blue-700 text-white'
               : 'bg-gray-200 text-black'
           }`}
         >

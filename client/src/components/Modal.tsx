@@ -12,8 +12,18 @@ export default function Modal() {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const handleMultiSelectChange = (selected: string[]) => {
-    console.log('Selected:', selected);
     setSelectedOptions(selected);
+  };
+
+  const setPreferenceHandler = () => {
+    // Store the selected options in localStorage
+    localStorage.setItem(
+      'newsFeedPreferences',
+      JSON.stringify(selectedOptions)
+    );
+
+    // Close the modal
+    setOpen(false);
   };
 
   return (
@@ -29,42 +39,65 @@ export default function Modal() {
             transition
             className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
           >
-            <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-              <div className="sm:flex sm:items-start">
+            <div className="bg-white px-4 pb-4 pt-10">
+              <div className="">
                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                   <DialogTitle
-                    as="h3"
-                    className="text-base font-semibold leading-6 text-gray-900"
+                    as="h1"
+                    className="font-semibold leading-6 text-gray-900 text-center text-2xl tracking-tight"
                   >
-                    Select your preferences
+                    Make the newsfeed,{' '}
+                    <span className="text-blue-600 font-extrabold">
+                      your feed
+                    </span>
                   </DialogTitle>
+                  <p className="text-center mb-4 mt-2 text-gray-500 text-sm">
+                    Supercharge your feed with articles you'll love reading !
+                  </p>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500">
                       {/* Group */}
                       <div className="">
                         <MultiSelect
                           options={[
-                            { label: 'Option 1', value: 'option1' },
-                            { label: 'Option 2', value: 'option2' },
-                            { label: 'Option 3', value: 'option3' },
-                            { label: 'Option 4', value: 'option4' },
+                            { label: 'Politics', value: 'politics' },
+                            { label: 'Economy', value: 'economy' },
+                            { label: 'Technology', value: 'technology' },
+                            { label: 'Health', value: 'health' },
+                            { label: 'Sports', value: 'sports' },
+                            { label: 'Entertainment', value: 'entertainment' },
+                            { label: 'Science', value: 'science' },
+                            { label: 'World', value: 'world' },
+                            { label: 'Business', value: 'business' },
+                            { label: 'Environment', value: 'environment' },
+                            { label: 'Education', value: 'education' },
+                            { label: 'Travel', value: 'travel' },
+                            { label: 'Food', value: 'food' },
+                            { label: 'Lifestyle', value: 'lifestyle' },
+                            { label: 'Crime', value: 'crime' },
+                            { label: 'Culture', value: 'culture' },
+                            { label: 'Real Estate', value: 'real_estate' },
+                            { label: 'Weather', value: 'weather' },
+                            { label: 'Fashion', value: 'fashion' },
+                            { label: 'Opinion', value: 'opinion' },
+                            { label: 'Local', value: 'local' },
                           ]}
                           selectedValues={selectedOptions}
                           onChange={handleMultiSelectChange}
                         />
-                        <p className="mt-4">
+                        {/* <p className="mt-4">
                           Current Selection: {selectedOptions.join(', ')}
-                        </p>
+                        </p> */}
                       </div>
-                    </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <div className="bg-gray-50 px-4 py-5 sm:flex sm:flex-row-reverse">
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={setPreferenceHandler}
                 className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm  sm:ml-3 sm:w-auto"
               >
                 Set your preferences

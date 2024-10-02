@@ -4,7 +4,7 @@ import axios from 'axios';
 import Loading from './Loading';
 
 const Chatbox = ({ newsData }: { newsData: any }) => {
-  const [waiting, setWaiting] = useState(false);
+  const [waiting, setWaiting] = useState(true);
   const [conversation, setConversation] = useState<
     { sender: string; content: string }[]
   >([]);
