@@ -6,15 +6,21 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const NewsSingle = ({ newsData }: { newsData: any }) => {
-  const [sentiment, setSentiment] = useState<string>(""); // Declare sentiment type
+  const [sentiment, setSentiment] = useState<string>(''); // Declare sentiment type
+  const [isStLoading, setStLoading] = useState(false);
 
   useEffect(() => {
     const analyzeSentiment = async () => {
       try {
-        const response = await axios.post('http://localhost:8000/analyze_sentiment', {
-          text: newsData.content,
-        });
+        setStLoading(true);
+        const response = await axios.post(
+          'http://localhost:8000/analyze_sentiment',
+          {
+            text: newsData.content,
+          }
+        );
         setSentiment(response.data.sentiment); // Set the sentiment based on API response
+        setStLoading(false);
       } catch (error) {
         console.error('Error analyzing sentiment:', error);
       }
@@ -22,6 +28,7 @@ const NewsSingle = ({ newsData }: { newsData: any }) => {
 
     analyzeSentiment();
   }, [newsData.content]);
+
   return (
     <>
       <Navbar />
@@ -80,70 +87,74 @@ const NewsSingle = ({ newsData }: { newsData: any }) => {
                 }
               /> */}
 
-              <div className="p-4 rounded-xl shadow-xl bg-green-600 mb-4 relative">
+              <div
+                className={`p-4 rounded-xl shadow-xl  mb-4 relative ${
+                  !isStLoading
+                    ? sentiment === 'POSITIVE'
+                      ? 'bg-green-600'
+                      : 'bg-red-600'
+                    : 'bg-gray-600'
+                }`}
+              >
                 <h1 className="italic text-xs text-white">Sentiment Report</h1>
                 <div className="flex items-center relative">
                   <div className="flex gap-1 ">
                     <h1 className="font-bold text-white text-xl">
-                    {sentiment ? sentiment : 'Analyzing...'}
+                      {isStLoading ? '------------------' : sentiment}
                     </h1>
                   </div>
-
-                  <div className="hidden">
-                    {/* Neutral */}
-                    <div className="w-7 h-7">
+                </div>
+                <div className="absolute top-1/2 right-5 -translate-y-1/2">
+                  {isStLoading && (
+                    <div role="status">
                       <svg
-                        width=""
-                        height=""
-                        viewBox="0 0 72 72"
-                        id="emoji"
+                        aria-hidden="true"
+                        className="w-11 h-11 text-gray-200 animate-spin fill-gray-400"
+                        viewBox="0 0 100 101"
+                        fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
-                        <g id="color">
-                          <path
-                            fill="transparent"
-                            d="M36,13c-12.6823,0-23,10.3177-23,23c0,12.6822,10.3177,23,23,23c12.6822,0,23-10.3178,23-23 C59,23.3177,48.6822,13,36,13z"
-                          />
-                        </g>
-                        <g id="hair" />
-                        <g id="skin" />
-                        <g id="skin-shadow" />
-                        <g id="line">
-                          <circle
-                            cx="36"
-                            cy="36"
-                            r="23"
-                            fill="none"
-                            stroke="#000000"
-                            stroke-miterlimit="10"
-                            stroke-width="4"
-                          />
-                          <line
-                            x1="27"
-                            x2="45"
-                            y1="43"
-                            y2="43"
-                            fill="none"
-                            stroke="#000000"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-miterlimit="10"
-                            stroke-width="2"
-                          />
-                          <path d="M30,31c0,1.6568-1.3448,3-3,3c-1.6553,0-3-1.3433-3-3c0-1.6552,1.3447-3,3-3C28.6552,28,30,29.3448,30,31" />
-                          <path d="M48,31c0,1.6568-1.3447,3-3,3s-3-1.3433-3-3c0-1.6552,1.3447-3,3-3S48,29.3448,48,31" />
-                        </g>
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
                       </svg>
+                      <span className="sr-only">Loading...</span>
                     </div>
-                    {/* Sad */}
-                    <div>
+                  )}
+
+                  {!isStLoading &&
+                    (sentiment === 'POSITIVE' ? (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
                         strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-6"
+                        stroke="#fff"
+                        // className="size-10"
+                        width={'3.5rem'}
+                        height={'3.5rem'}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="#fff"
+                        // className="size-10"
+                        width={'3.5rem'}
+                        height={'3.5rem'}
                       >
                         <path
                           strokeLinecap="round"
@@ -151,26 +162,7 @@ const NewsSingle = ({ newsData }: { newsData: any }) => {
                           d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
                         />
                       </svg>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute top-1/2 right-5 -translate-y-1/2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="#fff"
-                    // className="size-10"
-                    width={'3.5rem'}
-                    height={'3.5rem'}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
-                    />
-                  </svg>
+                    ))}
                 </div>
               </div>
 
