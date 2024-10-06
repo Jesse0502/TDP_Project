@@ -50,33 +50,42 @@ async def root():
 
 @app.get("/news")
 async def fetch_news(category: Optional[str] = Query(None),
-                    language: Optional[str] = Query("en"),
-                    country: Optional[str] = Query(None)):
-  print(os.environ.get("RAPID_API"))
-  url = "https://newscafapi.p.rapidapi.com/apirapid/news/?q=news"
-  headers = {
-      "x-rapidapi-key": os.getenv("RAPID_API_KEY"),  # Access environment variable
-      "x-rapidapi-host": "newscafapi.p.rapidapi.com",
-  }
+                     language: Optional[str] = Query("en"),
+                     country: Optional[str] = Query(None)):
+    print(os.environ.get("RAPID_API"))
+    url = "https://newscafapi.p.rapidapi.com/apirapid/news/?q=news"
+    headers = {
+        "x-rapidapi-key": os.getenv("RAPID_API_KEY"),  # Access environment variable
+        "x-rapidapi-host": "newscafapi.p.rapidapi.com",
+    }
 
-  try:
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    result = response.json()
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        result = response.json()
 
-    # Specify your desired file path here
-    file_path = "newsdata.json"
+        file_path = "newsdata.json"
 
-    # Choose the appropriate mode for file writing (overwrite or append)
-    with open(file_path, "w") as f:
-      f.write(json.dumps(result))
+        try:
+            with open(file_path, "r") as f:
+                existing_data = json.load(f)
+        except FileNotFoundError:
+            existing_data = [] 
 
-    return {"message": "News data fetched and saved successfully"}
-  except requests.exceptions.RequestException as error:
-    return {"error": str(error)}
-  except OSError as error:
-    return {"error": f"Error writing to file: {error}"}
-  
+        if isinstance(existing_data, list):
+            updated_data = result + existing_data
+        else:
+            updated_data = [result] + [existing_data]
+
+        with open(file_path, "w") as f:
+            json.dump(updated_data, f, indent=4)
+
+        return {"message": "News data fetched and saved successfully"}
+
+    except requests.exceptions.RequestException as error:
+        return {"error": str(error)}
+    except OSError as error:
+        return {"error": f"Error writing to file: {error}"}
 
 def load_fake_data():
   with open("newsdata.json", "r") as f:
