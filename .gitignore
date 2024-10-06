@@ -4,3 +4,4 @@ apikeys.txt
 venv
 __pycache__
 backend/new_env/
+frontend
