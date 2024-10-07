@@ -17,7 +17,7 @@ const App = ({ passInTop }: { passInTop: (item: unknown) => void }) => {
 
   return (
     <>
-      <Navbar />
+      <Navbar activeSection={'All News'} />
       <NewsList onDiscussClick={(item) => passInTop(item)} />
       {showModal && <Modal />}
     </>

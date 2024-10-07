@@ -6,6 +6,7 @@ import './index.css';
 
 import App from './App.tsx';
 import NewsSingle from './layout/NewsSingle.tsx';
+import Categories from './layout/Categories.tsx';
 
 const Main = () => {
   const [newsData, setNewsData] = useState<unknown>(null);
@@ -24,9 +25,16 @@ const Main = () => {
               />
             }
           />
+          <Route path="/:title" element={<NewsSingle newsData={newsData} />} />
           <Route
-            path="/:title"
-            element={<NewsSingle newsData={newsData} />}
+            path="/categories"
+            element={
+              <Categories
+                passInTop={(item): void => {
+                  setNewsData(item); // Store the data in state
+                }}
+              />
+            }
           />
         </Routes>
       </Router>

@@ -8,16 +8,15 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 
 const navigation = [
-  { name: 'All News', href: '#', current: true },
-  { name: 'Categories', href: '#', current: false },
-  { name: 'Trendings', href: '#', current: false },
+  { name: 'All News', href: '/', current: true },
+  { name: 'Categories', href: '/categories', current: false },
 ];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Example() {
+export default function Example({ activeSection }: { activeSection: string }) {
   const [hasShadow, setHasShadow] = useState<boolean>(false);
 
   const handleScroll = () => {
@@ -61,26 +60,30 @@ export default function Example() {
           </div>
           <div className="flex flex-1 items-center sm:items-stretch justify-between">
             <div className="flex flex-shrink-0 items-center h-14">
-              <Link to="/" className='w-full h-full'>
-                <img src="smart-news.png" alt="" className='w-full h-full object-contain'/>
+              <Link to="/" className="w-full h-full">
+                <img
+                  src="smart-news.png"
+                  alt=""
+                  className="w-full h-full object-contain"
+                />
               </Link>
             </div>
             <div className="sm:ml-6 flex items-center">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
-                    href={item.href}
+                    to={item.href}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
-                      item.current
+                      item.name === activeSection
                         ? 'bg-blue-500 text-white'
                         : 'text-black hover:bg-gray-200 hover:text-blue-500',
                       'rounded-full px-3 py-2 text-sm font-bold transition-all'
                     )}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

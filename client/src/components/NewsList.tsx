@@ -50,7 +50,7 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
     </div>
   );
 };
-const Skeleton: React.FC<{ url: string }> = ({ url }) => (
+export const Skeleton: React.FC<{ url: string }> = ({ url }) => (
   <div className="relative w-full h-[13rem] rounded-xl overflow-hidden">
     <img
       src={url}
