@@ -23,7 +23,7 @@ origins = [
 ]
 
 # Initialize the model and tokenizer
-model_name = "distilbert-base-uncased-finetuned-sst-2-english"
+model_name = "nlptown/bert-base-multilingual-uncased-sentiment"
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
@@ -177,8 +177,15 @@ async def analyze_sentiment(data: dict = Body(...)):
         with torch.no_grad():
             outputs = model(**inputs)
             predictions = F.softmax(outputs.logits, dim=1)
-            labels = torch.argmax(predictions, dim=1)
-            sentiment = model.config.id2label[labels.item()]
+            label = torch.argmax(predictions, dim=1).item()
+
+        # Map the predicted label to sentiment (assuming 1-5 scale from the model)
+        if label in [0, 1]:  # 1 and 2 in 5-star scale
+            sentiment = "NEGATIVE"
+        elif label == 2:  # 3 in 5-star scale
+            sentiment = "NEUTRAL"
+        else:  # 4 and 5 in 5-star scale
+            sentiment = "POSITIVE"
 
         return {'sentiment': sentiment}
     except (ValueError, Exception) as err:
