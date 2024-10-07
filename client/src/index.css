@@ -45,3 +45,11 @@
 .custom-scroll::-webkit-scrollbar-corner {
   background: #f7f7f7; /* Background of the corner where two scrollbars meet */
 }
+
+.swiper-button-next::after {
+  display: none;
+}
+
+.swiper-button-prev::after {
+  display: none;
+}
