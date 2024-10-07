@@ -104,7 +104,7 @@ opinion_classes = [
     "No agreement", 
     "Entirely factual"
 ]
-type_classes = ["center", "left", "right"]
+type_classes = ["Center", "Left", "Right"]
 
 @app.post("/predict_bias")
 async def predict_bias(data: dict = Body(...)):
