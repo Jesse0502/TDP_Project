@@ -1,4 +1,3 @@
-// import { cn } from '../lib/utils';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BentoGrid, BentoGridItem } from './BentoGrid';
@@ -8,24 +7,76 @@ interface NewsListProps {
   onDiscussClick: (item: unknown) => void;
 }
 
+// Retrieve the array from localStorage
+const storedClicks = localStorage.getItem('userClicks');
+
+// Parse the stored array or initialize an empty array if it doesn't exist
+const userClicks: any[] = storedClicks ? JSON.parse(storedClicks) : [];
+
 const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
   const [newsData, setNewsData] = useState<
     {
-      date: string; // ISO 8601 formatted date string (e.g., "2024-08-10T04:21:04Z")
-      img: string; // URL of the news article image (might be empty)
-      title: string; // Title of the news article
-      content: string; // Content of the news article
-      source_url: string; // URL of the source website
-      source_name: string; // Name of the source website
-      category: string; // Category of the news article (e.g., "Top Stories")
-      keywords: string[]; // Array of keywords associated with the news article
+      date: string;
+      img: string;
+      title: string;
+      content: string;
+      source_url: string;
+      source_name: string;
+      category: string;
+      keywords: string[];
     }[]
   >([]);
 
+  const getSortedNewsDataByClicks = (unsortedNewsData: any) => {
+    // Count clicks for each category
+    const clickCounts = userClicks.reduce<Record<string, number>>(
+      (acc, category) => {
+        acc[category.toLowerCase()] = (acc[category.toLowerCase()] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
+
+    // Calculate total clicks
+    const totalClicks = userClicks.length;
+
+    // Calculate probabilities for categories mentioned in userClicks
+    const categoryProbabilities = Object.entries(clickCounts).reduce<
+      Record<string, number>
+    >((acc, [category, count]) => {
+      acc[category] = count / totalClicks;
+      return acc;
+    }, {});
+
+    // Assign baseline probability of 0.1 for categories not mentioned
+    const baselineProbability = 0.1;
+
+    // Add all news items to array, but weight them based on category probability
+    const randomizedNewsData = unsortedNewsData.map((newsItem: any) => {
+      const category = newsItem.category.toLowerCase();
+      const probability =
+        categoryProbabilities[category] || baselineProbability;
+
+      // Add a weight to each news item
+      return { ...newsItem, weight: Math.random() * probability };
+    });
+
+    // Sort based on weight (higher probability articles appear first)
+    const sortedNewsData = randomizedNewsData.sort(
+      (a: any, b: any) => b.weight - a.weight
+    );
+
+    setNewsData(sortedNewsData);
+  };
+
   useEffect(() => {
     (async () => {
-      const newsData = await axios.get('http://localhost:8000/fake-data');
-      setNewsData(newsData.data);
+      try {
+        const response = await axios.get('http://localhost:8000/fake-data');
+        getSortedNewsDataByClicks(response.data);
+      } catch (error) {
+        console.error('Error fetching news data:', error);
+      }
     })();
   }, []);
 
@@ -50,6 +101,7 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
     </div>
   );
 };
+
 export const Skeleton: React.FC<{ url: string }> = ({ url }) => (
   <div className="relative w-full h-[13rem] rounded-xl overflow-hidden">
     <img

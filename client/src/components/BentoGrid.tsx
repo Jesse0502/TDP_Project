@@ -39,6 +39,30 @@ export const BentoGridItem = ({
   category?: string;
   onClick: (item: unknown) => void;
 }) => {
+  // Function to store the clicked parameter in localStorage
+  const storeClickInLocalStorage = (category) => {
+    // Retrieve the current array of clicks from localStorage
+    const storedClicks = localStorage.getItem('userClicks');
+
+    // Parse the stored array or initialize an empty array if it doesn't exist
+    const clicksArray = storedClicks ? JSON.parse(storedClicks) : [];
+
+    // Push the new category into the array
+    clicksArray.push(category.toLowerCase());
+
+    // Store the updated array back into localStorage
+    localStorage.setItem('userClicks', JSON.stringify(clicksArray));
+  };
+
+  const handleClick = () => {
+    if (category) {
+      storeClickInLocalStorage(category);
+    }
+    if (onClick) {
+      onClick(category);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -54,7 +78,7 @@ export const BentoGridItem = ({
               {category}
             </div>
             <div>
-              <Link to={`/${title.replaceAll(' ', '_')}`} onClick={onClick}>
+              <Link to={`/${title.replaceAll(' ', '_')}`} onClick={handleClick}>
                 <div className="w-10 h-10 hover:scale-110 transition-all">
                   <svg
                     id="Layer_1"
