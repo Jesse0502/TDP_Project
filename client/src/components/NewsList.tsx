@@ -1,4 +1,3 @@
-// import { cn } from '../lib/utils';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BentoGrid, BentoGridItem } from './BentoGrid';
@@ -7,6 +6,38 @@ import { excerpt } from '../lib/utils';
 interface NewsListProps {
   onDiscussClick: (item: unknown) => void;
 }
+
+// Sample user clicks array
+const userClicks = [
+  'politics',
+  'world',
+  'top stories',
+  'technology',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'world',
+  'top stories',
+  'top stories',
+  'top stories',
+  'top stories',
+  'technology',
+  'technology',
+  'technology',
+];
 
 const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
   const [newsData, setNewsData] = useState<
@@ -22,10 +53,45 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
     }[]
   >([]);
 
+  const getSortedNewsDataByClicks = (unsortedNewsData: any) => {
+    // Count clicks for each category
+    const clickCounts = userClicks.reduce<Record<string, number>>(
+      (acc, category) => {
+        acc[category.toLowerCase()] = (acc[category.toLowerCase()] || 0) + 1; // Convert to lower case for consistency
+        return acc;
+      },
+      {}
+    );
+
+    // Calculate total clicks
+    const totalClicks = userClicks.length;
+
+    // Calculate ratios for each category
+    const categoryRatios = Object.entries(clickCounts).reduce<
+      Record<string, number>
+    >((acc, [category, count]) => {
+      acc[category] = count / totalClicks; // Ratio calculation
+      return acc;
+    }, {});
+
+    // Sort news data based on the calculated ratios
+    const sortedNewsData = [...unsortedNewsData].sort((a, b) => {
+      const aRatio = categoryRatios[a.category.toLowerCase()] || 0; // Default to 0 if not found
+      const bRatio = categoryRatios[b.category.toLowerCase()] || 0;
+      return bRatio - aRatio; // Sort in descending order of ratios
+    });
+
+    setNewsData(sortedNewsData);
+  };
+
   useEffect(() => {
     (async () => {
-      const newsData = await axios.get('http://localhost:8000/fake-data');
-      setNewsData(newsData.data);
+      try {
+        const response = await axios.get('http://localhost:8000/fake-data');
+        getSortedNewsDataByClicks(response.data);
+      } catch (error) {
+        console.error('Error fetching news data:', error);
+      }
     })();
   }, []);
 
