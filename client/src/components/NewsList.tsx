@@ -7,49 +7,23 @@ interface NewsListProps {
   onDiscussClick: (item: unknown) => void;
 }
 
-// Sample user clicks array
-const userClicks = [
-  'politics',
-  'world',
-  'top stories',
-  'technology',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'world',
-  'top stories',
-  'top stories',
-  'top stories',
-  'top stories',
-  'technology',
-  'technology',
-  'technology',
-];
+// Retrieve the array from localStorage
+const storedClicks = localStorage.getItem('userClicks');
+
+// Parse the stored array or initialize an empty array if it doesn't exist
+const userClicks: any[] = storedClicks ? JSON.parse(storedClicks) : [];
 
 const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
   const [newsData, setNewsData] = useState<
     {
-      date: string; // ISO 8601 formatted date string (e.g., "2024-08-10T04:21:04Z")
-      img: string; // URL of the news article image (might be empty)
-      title: string; // Title of the news article
-      content: string; // Content of the news article
-      source_url: string; // URL of the source website
-      source_name: string; // Name of the source website
-      category: string; // Category of the news article (e.g., "Top Stories")
-      keywords: string[]; // Array of keywords associated with the news article
+      date: string;
+      img: string;
+      title: string;
+      content: string;
+      source_url: string;
+      source_name: string;
+      category: string;
+      keywords: string[];
     }[]
   >([]);
 
@@ -57,7 +31,7 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
     // Count clicks for each category
     const clickCounts = userClicks.reduce<Record<string, number>>(
       (acc, category) => {
-        acc[category.toLowerCase()] = (acc[category.toLowerCase()] || 0) + 1; // Convert to lower case for consistency
+        acc[category.toLowerCase()] = (acc[category.toLowerCase()] || 0) + 1;
         return acc;
       },
       {}
@@ -66,20 +40,31 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
     // Calculate total clicks
     const totalClicks = userClicks.length;
 
-    // Calculate ratios for each category
-    const categoryRatios = Object.entries(clickCounts).reduce<
+    // Calculate probabilities for categories mentioned in userClicks
+    const categoryProbabilities = Object.entries(clickCounts).reduce<
       Record<string, number>
     >((acc, [category, count]) => {
-      acc[category] = count / totalClicks; // Ratio calculation
+      acc[category] = count / totalClicks;
       return acc;
     }, {});
 
-    // Sort news data based on the calculated ratios
-    const sortedNewsData = [...unsortedNewsData].sort((a, b) => {
-      const aRatio = categoryRatios[a.category.toLowerCase()] || 0; // Default to 0 if not found
-      const bRatio = categoryRatios[b.category.toLowerCase()] || 0;
-      return bRatio - aRatio; // Sort in descending order of ratios
+    // Assign baseline probability of 0.1 for categories not mentioned
+    const baselineProbability = 0.1;
+
+    // Add all news items to array, but weight them based on category probability
+    const randomizedNewsData = unsortedNewsData.map((newsItem: any) => {
+      const category = newsItem.category.toLowerCase();
+      const probability =
+        categoryProbabilities[category] || baselineProbability;
+
+      // Add a weight to each news item
+      return { ...newsItem, weight: Math.random() * probability };
     });
+
+    // Sort based on weight (higher probability articles appear first)
+    const sortedNewsData = randomizedNewsData.sort(
+      (a: any, b: any) => b.weight - a.weight
+    );
 
     setNewsData(sortedNewsData);
   };
@@ -116,6 +101,7 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
     </div>
   );
 };
+
 export const Skeleton: React.FC<{ url: string }> = ({ url }) => (
   <div className="relative w-full h-[13rem] rounded-xl overflow-hidden">
     <img

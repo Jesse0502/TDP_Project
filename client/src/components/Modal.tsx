@@ -16,6 +16,18 @@ export default function Modal() {
   };
 
   const setPreferenceHandler = () => {
+    // Retrieve the current userClicks from localStorage
+    const storedClicks = localStorage.getItem('userClicks');
+
+    // Parse the stored array or initialize an empty array if it doesn't exist
+    const userClicks = storedClicks ? JSON.parse(storedClicks) : [];
+
+    // Merge the selectedOptions array into the userClicks array
+    const updatedUserClicks = [...userClicks, ...selectedOptions];
+
+    // Store the updated array back into localStorage
+    localStorage.setItem('userClicks', JSON.stringify(updatedUserClicks));
+
     // Store the selected options in localStorage
     localStorage.setItem(
       'newsFeedPreferences',
@@ -60,27 +72,14 @@ export default function Modal() {
                       <div className="">
                         <MultiSelect
                           options={[
-                            { label: 'Politics', value: 'politics' },
-                            { label: 'Economy', value: 'economy' },
+                            { label: 'Top Stories', value: 'top stories' },
+                            { label: 'Sports', value: 'sports' },
+                            { label: 'World', value: 'world' },
                             { label: 'Technology', value: 'technology' },
                             { label: 'Health', value: 'health' },
-                            { label: 'Sports', value: 'sports' },
-                            { label: 'Entertainment', value: 'entertainment' },
                             { label: 'Science', value: 'science' },
-                            { label: 'World', value: 'world' },
+                            { label: 'Entertainment', value: 'entertainment' },
                             { label: 'Business', value: 'business' },
-                            { label: 'Environment', value: 'environment' },
-                            { label: 'Education', value: 'education' },
-                            { label: 'Travel', value: 'travel' },
-                            { label: 'Food', value: 'food' },
-                            { label: 'Lifestyle', value: 'lifestyle' },
-                            { label: 'Crime', value: 'crime' },
-                            { label: 'Culture', value: 'culture' },
-                            { label: 'Real Estate', value: 'real_estate' },
-                            { label: 'Weather', value: 'weather' },
-                            { label: 'Fashion', value: 'fashion' },
-                            { label: 'Opinion', value: 'opinion' },
-                            { label: 'Local', value: 'local' },
                           ]}
                           selectedValues={selectedOptions}
                           onChange={handleMultiSelectChange}
