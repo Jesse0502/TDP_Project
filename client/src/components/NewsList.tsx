@@ -53,6 +53,7 @@ const NewsList: React.FC<NewsListProps> = ({ onDiscussClick }) => {
 
     // Add all news items to array, but weight them based on category probability
     const randomizedNewsData = unsortedNewsData.map((newsItem: any) => {
+      console.log(newsItem.category)
       const category = newsItem.category.toLowerCase();
       const probability =
         categoryProbabilities[category] || baselineProbability;
