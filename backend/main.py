@@ -92,7 +92,7 @@ def load_fake_data():
     data = json.load(f)
   return data
 
-@app.get("/fake-data")
+@app.get("/news-data")
 def get_fake_data():
   return load_fake_data()
 

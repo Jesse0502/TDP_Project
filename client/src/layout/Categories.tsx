@@ -11,7 +11,7 @@ const Categories = ({ passInTop }: { passInTop: (item: unknown) => void }) => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get('http://localhost:8000/fake-data');
+        const response = await axios.get('http://localhost:8000/news-data');
         const data = response.data;
 
         // Categorize the news data
