@@ -38,7 +38,7 @@ app.add_middleware(
 )
 
 async def generateAIResponse(prompt):
-    model = genai.GenerativeModel('gemini-1.5-pro')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     response = model.generate_content(prompt)
     print(response.text)
     return response.text
